@@ -14,6 +14,7 @@ class _LoginPageState extends State<Login> {
   late Size mediaSize;
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
   bool rememberUser = false;
 
   @override
@@ -24,7 +25,7 @@ class _LoginPageState extends State<Login> {
       decoration: BoxDecoration(
         color: myColor,
         image: DecorationImage(
-          image: const AssetImage("assets/images/bg.jpg"),
+          image: const AssetImage("assets/images/bg1.jpg"),
           fit: BoxFit.cover,
           colorFilter:
               ColorFilter.mode(myColor.withOpacity(0.2), BlendMode.dstATop),
@@ -40,7 +41,12 @@ class _LoginPageState extends State<Login> {
               child: _buildTop(),
             ),
           ),
-          Positioned(bottom: 0, child: _buildBottom()),
+          Positioned(bottom: 0, child:
+            Form(
+              key: _formKey,
+              child: _buildBottom(),
+            )
+          ),
         ]),
       ),
     );
@@ -105,13 +111,13 @@ class _LoginPageState extends State<Login> {
         const SizedBox(height: 40),
         FadeInUp(
           duration: Duration(milliseconds: 1300),
-          child: _buildGreyText("Email address"),
+          child: _buildGreyText("Địa chỉ email"),
         ),
         FadeInUp(
           duration: Duration(milliseconds: 1400),
           child: _buildInputField(emailController),
         ),
-        const SizedBox(height: 30),
+        const SizedBox(height: 20),
         FadeInUp(
           duration: Duration(milliseconds: 1500),
           child: _buildGreyText("Mật khẩu"),
@@ -125,7 +131,7 @@ class _LoginPageState extends State<Login> {
           duration: Duration(milliseconds: 1700),
           child: _buildRememberForgot(),
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 10),
         FadeInUp(
           duration: Duration(milliseconds: 1800),
           child: _buildLoginButton(),
@@ -148,12 +154,18 @@ class _LoginPageState extends State<Login> {
 
   Widget _buildInputField(TextEditingController controller,
       {isPassword = false}) {
-    return TextField(
+    return TextFormField(
       controller: controller,
       decoration: InputDecoration(
         suffixIcon: isPassword ? Icon(Icons.remove_red_eye) : Icon(Icons.done),
       ),
       obscureText: isPassword,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Không được bỏ trống thông tin.';
+        }
+        return null;
+      },
     );
   }
 
@@ -170,7 +182,7 @@ class _LoginPageState extends State<Login> {
                     rememberUser = value!;
                   });
                 }),
-            _buildGreyText("Remember me"),
+            _buildGreyText("Lưu thông tin"),
           ],
         ),
         TextButton(
@@ -178,7 +190,7 @@ class _LoginPageState extends State<Login> {
                   context,
                   Routes.forgot,
                 ),
-            child: _buildGreyText("Forgot password?"))
+            child: Text("Quên mật khẩu?"))
       ],
     );
   }
@@ -186,8 +198,11 @@ class _LoginPageState extends State<Login> {
   Widget _buildLoginButton() {
     return ElevatedButton(
       onPressed: () {
-        debugPrint("Email : ${emailController.text}");
-        debugPrint("Mật khẩu : ${passwordController.text}");
+        if (_formKey.currentState!.validate()) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Processing Data')),
+          );
+        }
       },
       style: ElevatedButton.styleFrom(
         shape: const StadiumBorder(),
@@ -195,7 +210,7 @@ class _LoginPageState extends State<Login> {
         shadowColor: myColor,
         minimumSize: const Size.fromHeight(60),
       ),
-      child: const Text("LOGIN"),
+      child: const Text("Đăng nhập"),
     );
   }
 
@@ -206,21 +221,24 @@ class _LoginPageState extends State<Login> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              _buildGreyText("Chưa có tài khoản?"),
               TextButton(
                   onPressed: () => Navigator.pushNamed(
                       context,
                       Routes.register,
                   ),
-                  child: Text('Sign up')
+                  child: Text('Đăng ký')
               ),
-              _buildGreyText("Or Login with"),
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 5),
+          _buildGreyText("Hoặc đăng nhập với"),
+          const SizedBox(height: 5),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Tab(icon: Image.asset("assets/images/facebook.png")),
+              const SizedBox(width: 20,),
               Tab(icon: Image.asset("assets/images/twitter.png")),
               // Tab(icon: Image.asset("assets/images/github.png")),
             ],

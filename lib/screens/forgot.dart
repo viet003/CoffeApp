@@ -12,6 +12,7 @@ class _ForgotState extends State<Forgot> {
   late Color myColor;
   late Size mediaSize;
   TextEditingController emailController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +38,12 @@ class _ForgotState extends State<Forgot> {
               child: _buildTop(),
             ),
           ),
-          Positioned(bottom: 0, child: _buildBottom()),
+          Positioned(bottom: 0, child:
+            Form(
+              key: _formKey,
+              child: _buildBottom(),
+            )
+          ),
         ]),
       ),
     );
@@ -121,13 +127,13 @@ class _ForgotState extends State<Forgot> {
           duration: Duration(milliseconds: 1600),
           child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
             _buildGreyText("Hoặc đăng nhập"),
-            ElevatedButton(
+            TextButton(
                 onPressed: () => Navigator.pop(context),
                 style: ElevatedButton.styleFrom(
                   shape: const StadiumBorder(),
                   elevation: 20,
                 ),
-                child: Text('LOGIN'))
+                child: Text('Đăng nhập'))
           ]),
         ),
         SizedBox(
@@ -146,19 +152,29 @@ class _ForgotState extends State<Forgot> {
 
   Widget _buildInputField(TextEditingController controller,
       {isPassword = false}) {
-    return TextField(
+    return TextFormField(
       controller: controller,
       decoration: InputDecoration(
         suffixIcon: isPassword ? Icon(Icons.remove_red_eye) : Icon(Icons.done),
       ),
       obscureText: isPassword,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Không được bỏ trống thông tin.';
+        }
+        return null;
+      },
     );
   }
 
   Widget _buildLoginButton() {
     return ElevatedButton(
       onPressed: () {
-        debugPrint("Email : ${emailController.text}");
+        if (_formKey.currentState!.validate()) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Processing Data')),
+          );
+        }
       },
       style: ElevatedButton.styleFrom(
         shape: const StadiumBorder(),

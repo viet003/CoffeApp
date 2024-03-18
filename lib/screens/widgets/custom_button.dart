@@ -22,7 +22,7 @@ class _CustomButtonState extends State<CustomButton> {
     return ElevatedButton(
       onPressed: () => widget.onPressed(),
       style: ElevatedButton.styleFrom(
-        backgroundColor: const Color(0xffC67C4E),
+        backgroundColor: Theme.of(context).primaryColor.withOpacity(0.2),
         foregroundColor: Colors.white,
         elevation: 0,
         shape: RoundedRectangleBorder(

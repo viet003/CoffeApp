@@ -14,6 +14,7 @@ class _RegisterState extends State<Register> {
   TextEditingController userNameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +40,12 @@ class _RegisterState extends State<Register> {
               child: _buildTop(),
             ),
           ),
-          Positioned(bottom: 0, child: _buildBottom()),
+          Positioned(bottom: 0, child:
+            Form(
+              key: _formKey,
+              child: _buildBottom(),
+            )
+          ),
         ]),
       ),
     );
@@ -104,7 +110,7 @@ class _RegisterState extends State<Register> {
         const SizedBox(height: 40),
         FadeInUp(
           duration: Duration(milliseconds: 1300),
-          child: _buildGreyText("User name"),
+          child: _buildGreyText("Tên người dùng"),
         ),
         FadeInUp(
           duration: Duration(milliseconds: 1400),
@@ -113,7 +119,7 @@ class _RegisterState extends State<Register> {
         const SizedBox(height: 30),
         FadeInUp(
           duration: Duration(milliseconds: 1500),
-          child: _buildGreyText("Email address"),
+          child: _buildGreyText("Địa chỉ email"),
         ),
         FadeInUp(
           duration: Duration(milliseconds: 1600),
@@ -122,7 +128,7 @@ class _RegisterState extends State<Register> {
         const SizedBox(height: 30),
         FadeInUp(
           duration: Duration(milliseconds: 1700),
-          child: _buildGreyText("Password"),
+          child: _buildGreyText("Mật khẩu"),
         ),
         FadeInUp(
           duration: Duration(milliseconds: 1800),
@@ -142,7 +148,7 @@ class _RegisterState extends State<Register> {
               _buildGreyText("or"),
               TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: Text('Login')
+                  child: Text('Đăng nhập')
               )
             ],
           )
@@ -160,20 +166,29 @@ class _RegisterState extends State<Register> {
 
   Widget _buildInputField(TextEditingController controller,
       {isPassword = false}) {
-    return TextField(
+    return TextFormField(
       controller: controller,
       decoration: InputDecoration(
         suffixIcon: isPassword ? Icon(Icons.remove_red_eye) : Icon(Icons.done),
       ),
       obscureText: isPassword,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Không được bỏ trống thông tin.';
+        }
+        return null;
+      },
     );
   }
 
   Widget _buildSignUpButton() {
     return ElevatedButton(
       onPressed: () {
-        debugPrint("Email : ${emailController.text}");
-        debugPrint("Password : ${passwordController.text}");
+        if (_formKey.currentState!.validate()) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Processing Data')),
+          );
+        }
       },
       style: ElevatedButton.styleFrom(
         shape: const StadiumBorder(),
@@ -181,7 +196,7 @@ class _RegisterState extends State<Register> {
         shadowColor: myColor,
         minimumSize: const Size.fromHeight(60),
       ),
-      child: const Text("SIGN UP"),
+      child: const Text("Đăng ký"),
     );
   }
 }

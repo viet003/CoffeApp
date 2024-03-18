@@ -23,13 +23,13 @@ class _WelcomeState extends State<Welcome> {
           alignment: Alignment.topCenter,
           children: [
             Container(
-              height: size.height * 0.68,
+              height: size.height * 1,
               width: size.width,
               alignment: Alignment.center,
               decoration: const BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage("assets/images/welcome.png"),
-                  fit: BoxFit.contain,
+                  image: AssetImage("assets/images/bg1.jpg"),
+                  fit: BoxFit.cover,
                 ),
               ),
             ),
@@ -39,7 +39,7 @@ class _WelcomeState extends State<Welcome> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Coffee so good, \nyour taste buds\n will love it.",
+                    "Cà phê – khơi dậy\n niềm đam mê",
                     style: GoogleFonts.sora(
                       fontSize: 34,
                       fontWeight: FontWeight.w600,
@@ -51,7 +51,7 @@ class _WelcomeState extends State<Welcome> {
                     height: size.height * 0.010,
                   ),
                   Text(
-                    "The best grain, the finest roast, \n the powerful flavor.",
+                    "Ở đây có cà phê được pha một cách hạnh phúc,\n được phục vụ với tình yêu",
                     style: GoogleFonts.sora(
                       fontSize: 14,
                       fontWeight: FontWeight.w400,
@@ -62,7 +62,7 @@ class _WelcomeState extends State<Welcome> {
                   SizedBox(
                     height: size.height * 0.030,
                   ),
-                  SizedBox(
+                  Container(
                     height: 62,
                     width: size.width * 0.80,
                     child: CustomButton(
