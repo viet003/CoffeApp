@@ -1,5 +1,5 @@
-import 'package:coffeeapp/common/app_routes.dart';
-import 'package:coffeeapp/common/route_generator.dart';
+import 'package:coffeeapp/component/app_routes.dart';
+import 'package:coffeeapp/component/route_generator.dart';
 import 'package:coffeeapp/screens/welcome.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

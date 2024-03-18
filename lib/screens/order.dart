@@ -1,4 +1,4 @@
-import 'package:coffeeapp/common/app_routes.dart';
+import 'package:coffeeapp/component/app_routes.dart';
 import 'package:coffeeapp/screens/widgets/custom_button.dart';
 import 'package:coffeeapp/screens/widgets/type_toggle.dart';
 import 'package:flutter/material.dart';

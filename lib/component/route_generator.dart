@@ -2,7 +2,9 @@ import 'package:coffeeapp/screens/delivery.dart';
 import 'package:coffeeapp/screens/detail.dart';
 import 'package:coffeeapp/screens/home.dart';
 import 'package:coffeeapp/screens/login.dart';
+import 'package:coffeeapp/screens/forgot.dart';
 import 'package:coffeeapp/screens/order.dart';
+import 'package:coffeeapp/screens/register.dart';
 import 'package:coffeeapp/screens/welcome.dart';
 import 'package:flutter/material.dart';
 
@@ -21,16 +23,16 @@ class RouteGenerator {
           Login(),
           settings: settings,
         );
-      // case Routes.welcome:
-      //   return buildRoute(
-      //     const Welcome(),
-      //     settings: settings,
-      //   );
-      // case Routes.welcome:
-      //   return buildRoute(
-      //     const Welcome(),
-      //     settings: settings,
-      //   );
+      case Routes.forgot:
+        return buildRoute(
+          Forgot(),
+          settings: settings,
+        );
+      case Routes.register:
+        return buildRoute(
+          Register(),
+          settings: settings,
+        );
       case Routes.home:
         return buildRoute(
           const Home(),
