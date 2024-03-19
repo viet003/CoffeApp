@@ -1,16 +1,19 @@
 class LoginResponseModel {
   final String token;
-  final String err;
+  final int err;
+  final String msg;
 
   LoginResponseModel({
     this.token = '',
-    this.err = ''
+    this.err = -1,
+    this.msg = ''
   });
 
   factory LoginResponseModel.fromJson(Map<String, dynamic> json) {
     return LoginResponseModel(
       token: json["token"] != null ? json["token"] : "",
-      err: json["error"] != null ? json["error"] : "",
+      err: json["err"] != null ? json["err"] : "",
+      msg: json["msg"] != null ? json["msg"] : "",
     );
   }
 }

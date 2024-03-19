@@ -128,7 +128,7 @@ class _ForgotState extends State<Forgot> {
         const SizedBox(height: 40),
         FadeInUp(
           duration: Duration(milliseconds: 1500),
-          child: _buildLoginButton(),
+          child: _buildForgotButton(),
         ),
         SizedBox(
           height: 50,
@@ -136,8 +136,8 @@ class _ForgotState extends State<Forgot> {
         FadeInUp(
           duration: Duration(milliseconds: 1600),
           child:
-              Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-            _buildGreyText("Hoặc đăng nhập"),
+              Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            _buildGreyText("or"),
             TextButton(
                 onPressed: () => Navigator.pop(context),
                 style: ElevatedButton.styleFrom(
@@ -149,6 +149,10 @@ class _ForgotState extends State<Forgot> {
         ),
         SizedBox(
           height: 10,
+        ),
+        FadeInUp(
+          duration: Duration(milliseconds: 1700),
+          child: _buildOtherLogin(),
         ),
       ],
     );
@@ -178,7 +182,7 @@ class _ForgotState extends State<Forgot> {
     );
   }
 
-  Widget _buildLoginButton() {
+  Widget _buildForgotButton() {
     return ElevatedButton(
       onPressed: () {
         if (_formKey.currentState!.validate()) {
@@ -223,6 +227,28 @@ class _ForgotState extends State<Forgot> {
         minimumSize: const Size.fromHeight(60),
       ),
       child: const Text("SUBMIT"),
+    );
+  }
+
+  Widget _buildOtherLogin() {
+    return Center(
+      child: Column(
+        children: [
+          _buildGreyText("Hoặc đăng nhập với"),
+          const SizedBox(height: 5),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Tab(icon: Image.asset("assets/images/facebook.png")),
+              const SizedBox(
+                width: 20,
+              ),
+              Tab(icon: Image.asset("assets/images/twitter.png")),
+              // Tab(icon: Image.asset("assets/images/github.png")),
+            ],
+          )
+        ],
+      ),
     );
   }
 }

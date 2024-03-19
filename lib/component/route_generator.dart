@@ -6,6 +6,7 @@ import 'package:coffeeapp/screens/forgot.dart';
 import 'package:coffeeapp/screens/order.dart';
 import 'package:coffeeapp/screens/register.dart';
 import 'package:coffeeapp/screens/welcome.dart';
+import 'package:coffeeapp/admin/adminHome.dart';
 import 'package:flutter/material.dart';
 
 import 'app_routes.dart';
@@ -31,6 +32,11 @@ class RouteGenerator {
       case Routes.register:
         return buildRoute(
           Register(),
+          settings: settings,
+        );
+      case Routes.adminHome:
+        return buildRoute(
+          AdminHome(),
           settings: settings,
         );
       case Routes.home:

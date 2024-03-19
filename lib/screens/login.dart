@@ -3,6 +3,7 @@ import 'package:coffeeapp/component/app_routes.dart';
 import 'package:coffeeapp/controller/loginController.dart';
 import 'package:coffeeapp/models/loginModel.dart';
 import 'package:flutter/material.dart';
+import 'package:jwt_decode/jwt_decode.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -215,15 +216,42 @@ class _LoginPageState extends State<Login> {
           loginRequestModel.email = emailController.text;
           loginRequestModel.password = passwordController.text;
           loginController loginCtr = new loginController();
-          loginCtr.login(loginRequestModel).then((value) => {
-                if (value != null)
-                  {
-                    if (value.token.isNotEmpty)
-                      {Navigator.pushNamed(context, Routes.home)}
-                    else
-                      {print(false)}
-                  }
-              });
+          loginCtr.login(loginRequestModel).then((value) {
+            if (value != null && value.token.isNotEmpty) {
+              Map<String, dynamic> decodedToken = Jwt.parseJwt(value.token);
+              String role = decodedToken['role'];
+              if(role == 'admin') {
+                Navigator.pushNamed(context, Routes.adminHome);
+              } else {
+                Navigator.pushNamed(context, Routes.home);
+              }
+              emailController.text = '';
+              passwordController.text = '';
+            } else {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text('Thông báo'),
+                    content: Container(
+                      height: 100,
+                      child: Column(
+                        children: [Text(value.msg)],
+                      ),
+                    ),
+                    actions: [
+                      ElevatedButton(
+                        onPressed: () {
+                         Navigator.pop(context);
+                        },
+                        child: Text('Đóng'),
+                      ),
+                    ],
+                  );
+                },
+              );
+            }
+          });
         }
       },
       style: ElevatedButton.styleFrom(
