@@ -1,4 +1,6 @@
 import 'package:animate_do/animate_do.dart';
+import 'package:coffeeapp/controller/forgotController.dart';
+import 'package:coffeeapp/models/forgotModel.dart';
 import 'package:flutter/material.dart';
 
 class Forgot extends StatefulWidget {
@@ -13,6 +15,14 @@ class _ForgotState extends State<Forgot> {
   late Size mediaSize;
   TextEditingController emailController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  late ForgotRequestModel forgotRequestModel;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    forgotRequestModel = new ForgotRequestModel();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,12 +48,12 @@ class _ForgotState extends State<Forgot> {
               child: _buildTop(),
             ),
           ),
-          Positioned(bottom: 0, child:
-            Form(
-              key: _formKey,
-              child: _buildBottom(),
-            )
-          ),
+          Positioned(
+              bottom: 0,
+              child: Form(
+                key: _formKey,
+                child: _buildBottom(),
+              )),
         ]),
       ),
     );
@@ -109,7 +119,7 @@ class _ForgotState extends State<Forgot> {
         const SizedBox(height: 60),
         FadeInUp(
           duration: Duration(milliseconds: 1300),
-          child: _buildGreyText("Email address"),
+          child: _buildGreyText("Địa chỉ email"),
         ),
         FadeInUp(
           duration: Duration(milliseconds: 1400),
@@ -125,7 +135,8 @@ class _ForgotState extends State<Forgot> {
         ),
         FadeInUp(
           duration: Duration(milliseconds: 1600),
-          child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+          child:
+              Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
             _buildGreyText("Hoặc đăng nhập"),
             TextButton(
                 onPressed: () => Navigator.pop(context),
@@ -171,9 +182,38 @@ class _ForgotState extends State<Forgot> {
     return ElevatedButton(
       onPressed: () {
         if (_formKey.currentState!.validate()) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Processing Data')),
-          );
+          forgotRequestModel.email = emailController.text;
+          forgotController SignUpCtr = new forgotController();
+          SignUpCtr.forgot(forgotRequestModel).then((value) => {
+                if (value != null)
+                  {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text('Thông báo'),
+                          content: Container(
+                            height: 100,
+                            child: Column(
+                              children: [Text(value.msg)],
+                            ),
+                          ),
+                          actions: [
+                            ElevatedButton(
+                              onPressed: () {
+                                if (value.err == 0) {
+                                  Navigator.of(context).pop();
+                                  Navigator.of(context).pop();
+                                }
+                              },
+                              child: Text('Đóng'),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  }
+              });
         }
       },
       style: ElevatedButton.styleFrom(

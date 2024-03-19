@@ -1,4 +1,6 @@
 import 'package:animate_do/animate_do.dart';
+import 'package:coffeeapp/controller/signupController.dart';
+import 'package:coffeeapp/models/signUpModel.dart';
 import 'package:flutter/material.dart';
 
 class Register extends StatefulWidget {
@@ -15,6 +17,15 @@ class _RegisterState extends State<Register> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  late SignUpRequestModel signUpRequestModel;
+  late SignUpResponseModel signUpResponseModel;
+
+  @override
+  void initState() {
+    super.initState();
+    signUpRequestModel = new SignUpRequestModel();
+    signUpResponseModel = new SignUpResponseModel();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +38,7 @@ class _RegisterState extends State<Register> {
           image: const AssetImage("assets/images/bg.jpg"),
           fit: BoxFit.cover,
           colorFilter:
-          ColorFilter.mode(myColor.withOpacity(0.2), BlendMode.dstATop),
+              ColorFilter.mode(myColor.withOpacity(0.2), BlendMode.dstATop),
         ),
       ),
       child: Scaffold(
@@ -40,12 +51,12 @@ class _RegisterState extends State<Register> {
               child: _buildTop(),
             ),
           ),
-          Positioned(bottom: 0, child:
-            Form(
-              key: _formKey,
-              child: _buildBottom(),
-            )
-          ),
+          Positioned(
+              bottom: 0,
+              child: Form(
+                key: _formKey,
+                child: _buildBottom(),
+              )),
         ]),
       ),
     );
@@ -81,9 +92,9 @@ class _RegisterState extends State<Register> {
       child: Card(
         shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(30),
-              topRight: Radius.circular(30),
-            )),
+          topLeft: Radius.circular(30),
+          topRight: Radius.circular(30),
+        )),
         child: Padding(
           padding: const EdgeInsets.all(32.0),
           child: _buildForm(),
@@ -139,20 +150,20 @@ class _RegisterState extends State<Register> {
           duration: Duration(milliseconds: 1900),
           child: _buildSignUpButton(),
         ),
-        const SizedBox(height: 30,),
-        FadeInUp(
-          duration: Duration(milliseconds: 2000),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _buildGreyText("or"),
-              TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: Text('Đăng nhập')
-              )
-            ],
-          )
+        const SizedBox(
+          height: 30,
         ),
+        FadeInUp(
+            duration: Duration(milliseconds: 2000),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _buildGreyText("or"),
+                TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: Text('Đăng nhập'))
+              ],
+            )),
       ],
     );
   }
@@ -185,9 +196,43 @@ class _RegisterState extends State<Register> {
     return ElevatedButton(
       onPressed: () {
         if (_formKey.currentState!.validate()) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Processing Data')),
-          );
+          signUpRequestModel.username = userNameController.text;
+          signUpRequestModel.email = emailController.text;
+          signUpRequestModel.password = passwordController.text;
+          signUpController SignUpCtr = new signUpController();
+          SignUpCtr.signUp(signUpRequestModel).then((value) => {
+                if (value != null)
+                  {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text('Thông báo'),
+                          content: Container(
+                            height: 100,
+                            child: Column(
+                              children: [Text(value.msg)],
+                            ),
+                          ),
+                          actions: [
+                            ElevatedButton(
+                              onPressed: () {
+                                if (value.err == 0) {
+                                  Navigator.of(context).pop();
+                                  Navigator.of(context).pop();
+                                } else {
+                                  Navigator.of(context).pop();
+                                }
+                              },
+                              child: Text('Đóng'),
+                            ),
+                          ],
+                        );
+                        // Hiển thị popup khi nhấn nút
+                      },
+                    )
+                  }
+              });
         }
       },
       style: ElevatedButton.styleFrom(

@@ -1,5 +1,7 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:coffeeapp/component/app_routes.dart';
+import 'package:coffeeapp/controller/loginController.dart';
+import 'package:coffeeapp/models/loginModel.dart';
 import 'package:flutter/material.dart';
 
 class Login extends StatefulWidget {
@@ -16,6 +18,14 @@ class _LoginPageState extends State<Login> {
   TextEditingController passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool rememberUser = false;
+  bool isApiCallProcess = false;
+  late LoginRequestModel loginRequestModel;
+
+  @override
+  void initState() {
+    super.initState();
+    loginRequestModel = new LoginRequestModel();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,12 +51,12 @@ class _LoginPageState extends State<Login> {
               child: _buildTop(),
             ),
           ),
-          Positioned(bottom: 0, child:
-            Form(
-              key: _formKey,
-              child: _buildBottom(),
-            )
-          ),
+          Positioned(
+              bottom: 0,
+              child: Form(
+                key: _formKey,
+                child: _buildBottom(),
+              )),
         ]),
       ),
     );
@@ -199,9 +209,21 @@ class _LoginPageState extends State<Login> {
     return ElevatedButton(
       onPressed: () {
         if (_formKey.currentState!.validate()) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Processing Data')),
-          );
+          setState(() {
+            isApiCallProcess = true;
+          });
+          loginRequestModel.email = emailController.text;
+          loginRequestModel.password = passwordController.text;
+          loginController loginCtr = new loginController();
+          loginCtr.login(loginRequestModel).then((value) => {
+                if (value != null)
+                  {
+                    if (value.token.isNotEmpty)
+                      {Navigator.pushNamed(context, Routes.home)}
+                    else
+                      {print(false)}
+                  }
+              });
         }
       },
       style: ElevatedButton.styleFrom(
@@ -224,11 +246,10 @@ class _LoginPageState extends State<Login> {
               _buildGreyText("Chưa có tài khoản?"),
               TextButton(
                   onPressed: () => Navigator.pushNamed(
-                      context,
-                      Routes.register,
-                  ),
-                  child: Text('Đăng ký')
-              ),
+                        context,
+                        Routes.register,
+                      ),
+                  child: Text('Đăng ký')),
             ],
           ),
           const SizedBox(height: 5),
@@ -238,7 +259,9 @@ class _LoginPageState extends State<Login> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Tab(icon: Image.asset("assets/images/facebook.png")),
-              const SizedBox(width: 20,),
+              const SizedBox(
+                width: 20,
+              ),
               Tab(icon: Image.asset("assets/images/twitter.png")),
               // Tab(icon: Image.asset("assets/images/github.png")),
             ],
