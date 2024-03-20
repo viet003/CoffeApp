@@ -33,12 +33,12 @@ class _RegisterState extends State<Register> {
     mediaSize = MediaQuery.of(context).size;
     return Container(
       decoration: BoxDecoration(
-        color: myColor,
+        // color: myColor,
         image: DecorationImage(
           image: const AssetImage("assets/images/bg.jpg"),
           fit: BoxFit.cover,
           colorFilter:
-              ColorFilter.mode(myColor.withOpacity(0.2), BlendMode.dstATop),
+              ColorFilter.mode(myColor.withOpacity(0.5), BlendMode.dstATop),
         ),
       ),
       child: Scaffold(

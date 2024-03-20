@@ -26,16 +26,16 @@ class _ForgotState extends State<Forgot> {
 
   @override
   Widget build(BuildContext context) {
-    myColor = Theme.of(context).primaryColor;
+    myColor = Theme.of(context).primaryColor.withOpacity(0.8);
     mediaSize = MediaQuery.of(context).size;
     return Container(
       decoration: BoxDecoration(
-        color: myColor,
+        // color: myColor,
         image: DecorationImage(
           image: const AssetImage("assets/images/bg.jpg"),
           fit: BoxFit.cover,
           colorFilter:
-              ColorFilter.mode(myColor.withOpacity(0.2), BlendMode.dstATop),
+              ColorFilter.mode(myColor.withOpacity(0.5), BlendMode.dstATop),
         ),
       ),
       child: Scaffold(
@@ -226,7 +226,7 @@ class _ForgotState extends State<Forgot> {
         shadowColor: myColor,
         minimumSize: const Size.fromHeight(60),
       ),
-      child: const Text("SUBMIT"),
+      child: const Text("Submit"),
     );
   }
 

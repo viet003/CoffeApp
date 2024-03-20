@@ -4,6 +4,7 @@ import 'package:coffeeapp/controller/loginController.dart';
 import 'package:coffeeapp/models/loginModel.dart';
 import 'package:flutter/material.dart';
 import 'package:jwt_decode/jwt_decode.dart';
+import 'package:coffeeapp/controller/store.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -30,16 +31,16 @@ class _LoginPageState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-    myColor = Theme.of(context).primaryColor;
+    myColor = Theme.of(context).primaryColor.withOpacity(0.8);
     mediaSize = MediaQuery.of(context).size;
     return Container(
       decoration: BoxDecoration(
-        color: myColor,
+        // color: myColor,
         image: DecorationImage(
-          image: const AssetImage("assets/images/bg1.jpg"),
+          image: const AssetImage("assets/images/bg.jpg"),
           fit: BoxFit.cover,
           colorFilter:
-              ColorFilter.mode(myColor.withOpacity(0.2), BlendMode.dstATop),
+              ColorFilter.mode(myColor.withOpacity(0.5), BlendMode.dstATop),
         ),
       ),
       child: Scaffold(
@@ -168,7 +169,7 @@ class _LoginPageState extends State<Login> {
     return TextFormField(
       controller: controller,
       decoration: InputDecoration(
-        suffixIcon: isPassword ? Icon(Icons.remove_red_eye) : Icon(Icons.done),
+        suffixIcon: isPassword ? const Icon(Icons.remove_red_eye) : const Icon(Icons.done),
       ),
       obscureText: isPassword,
       validator: (value) {
@@ -201,7 +202,7 @@ class _LoginPageState extends State<Login> {
                   context,
                   Routes.forgot,
                 ),
-            child: Text("Quên mật khẩu?"))
+            child: const Text("Quên mật khẩu?"))
       ],
     );
   }
@@ -217,14 +218,17 @@ class _LoginPageState extends State<Login> {
           loginRequestModel.password = passwordController.text;
           loginController loginCtr = new loginController();
           loginCtr.login(loginRequestModel).then((value) {
-            if (value != null && value.token.isNotEmpty) {
+            if (value.token.isNotEmpty) {
               Map<String, dynamic> decodedToken = Jwt.parseJwt(value.token);
               String role = decodedToken['role'];
+              Store save= new Store();
+              save.saveToken(value);
               if(role == 'admin') {
                 Navigator.pushNamed(context, Routes.adminHome);
               } else {
                 Navigator.pushNamed(context, Routes.home);
               }
+
               emailController.text = '';
               passwordController.text = '';
             } else {

@@ -1,7 +1,9 @@
 import 'package:coffeeapp/component/app_routes.dart';
+import 'package:coffeeapp/controller/store.dart';
 import 'package:coffeeapp/screens/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:jwt_decode/jwt_decode.dart';
 
 class Welcome extends StatefulWidget {
   const Welcome({super.key});
@@ -11,6 +13,30 @@ class Welcome extends StatefulWidget {
 }
 
 class _WelcomeState extends State<Welcome> {
+  final store = new Store();
+  late Map<String, dynamic> decodedToken = {};
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  Future<void> _initializeStateAsync() async {
+    String value = await store.getToken();
+    if (value != '') {
+      decodedToken = Jwt.parseJwt(value);
+      if (decodedToken['role'] == 'admin') {
+        Navigator.pushNamed(context, Routes.adminHome);
+      } else {
+        Navigator.pushNamed(context, Routes.home);
+      }
+    } else {
+      Navigator.pushNamed(context, Routes.login);
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -67,10 +93,9 @@ class _WelcomeState extends State<Welcome> {
                     width: size.width * 0.80,
                     child: CustomButton(
                       title: 'Get Started',
-                      onPressed: () => Navigator.pushNamed(
-                        context,
-                        Routes.login,
-                      ),
+                      onPressed: () => {
+                        _initializeStateAsync()
+                      }
                     ),
                   ),
                   SizedBox(
