@@ -1,4 +1,5 @@
 import 'package:animate_do/animate_do.dart';
+import 'package:coffeeapp/component/progressAPI.dart';
 import 'package:coffeeapp/controller/forgotController.dart';
 import 'package:coffeeapp/models/forgotModel.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +17,7 @@ class _ForgotState extends State<Forgot> {
   TextEditingController emailController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   late ForgotRequestModel forgotRequestModel;
+  bool isProgressApi = false;
 
   @override
   void initState() {
@@ -39,23 +41,27 @@ class _ForgotState extends State<Forgot> {
         ),
       ),
       child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: Stack(children: [
-          Positioned(
-            top: 80.0, // Make sure to use a double value with a decimal point
-            child: FadeInUp(
-              duration: Duration(milliseconds: 1000),
-              child: _buildTop(),
-            ),
-          ),
-          Positioned(
-              bottom: 0,
-              child: Form(
-                key: _formKey,
-                child: _buildBottom(),
-              )),
-        ]),
-      ),
+          backgroundColor: Colors.transparent,
+          body: progressAPI(
+            child: Stack(children: [
+              Positioned(
+                top:
+                    80.0, // Make sure to use a double value with a decimal point
+                child: FadeInUp(
+                  duration: Duration(milliseconds: 1000),
+                  child: _buildTop(),
+                ),
+              ),
+              Positioned(
+                  bottom: 0,
+                  child: Form(
+                    key: _formKey,
+                    child: _buildBottom(),
+                  )),
+            ]),
+            inAsyncCall: isProgressApi,
+            opacity: 0.3,
+          )),
     );
   }
 
@@ -135,8 +141,7 @@ class _ForgotState extends State<Forgot> {
         ),
         FadeInUp(
           duration: Duration(milliseconds: 1600),
-          child:
-              Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             _buildGreyText("or"),
             TextButton(
                 onPressed: () => Navigator.pop(context),
@@ -186,9 +191,15 @@ class _ForgotState extends State<Forgot> {
     return ElevatedButton(
       onPressed: () {
         if (_formKey.currentState!.validate()) {
+          setState(() {
+            isProgressApi = true;
+          });
           forgotRequestModel.email = emailController.text;
           forgotController SignUpCtr = new forgotController();
           SignUpCtr.forgot(forgotRequestModel).then((value) => {
+                setState(() {
+                  isProgressApi = false;
+                }),
                 if (value != null)
                   {
                     showDialog(

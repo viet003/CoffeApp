@@ -55,7 +55,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
               ),
               child: Container(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    padding: const EdgeInsets.all(0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,

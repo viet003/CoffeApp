@@ -2,6 +2,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:coffeeapp/controller/signupController.dart';
 import 'package:coffeeapp/models/signUpModel.dart';
 import 'package:flutter/material.dart';
+import 'package:coffeeapp/component/progressAPI.dart';
 
 class Register extends StatefulWidget {
   const Register({super.key});
@@ -19,6 +20,7 @@ class _RegisterState extends State<Register> {
   final _formKey = GlobalKey<FormState>();
   late SignUpRequestModel signUpRequestModel;
   late SignUpResponseModel signUpResponseModel;
+  bool isApiCallProcess = false;
 
   @override
   void initState() {
@@ -42,23 +44,27 @@ class _RegisterState extends State<Register> {
         ),
       ),
       child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: Stack(children: [
-          Positioned(
-            top: 80.0, // Make sure to use a double value with a decimal point
-            child: FadeInUp(
-              duration: Duration(milliseconds: 1000),
-              child: _buildTop(),
-            ),
-          ),
-          Positioned(
-              bottom: 0,
-              child: Form(
-                key: _formKey,
-                child: _buildBottom(),
-              )),
-        ]),
-      ),
+          backgroundColor: Colors.transparent,
+          body: progressAPI(
+            child: Stack(children: [
+              Positioned(
+                top:
+                    80.0, // Make sure to use a double value with a decimal point
+                child: FadeInUp(
+                  duration: Duration(milliseconds: 1000),
+                  child: _buildTop(),
+                ),
+              ),
+              Positioned(
+                  bottom: 0,
+                  child: Form(
+                    key: _formKey,
+                    child: _buildBottom(),
+                  )),
+            ]),
+            inAsyncCall: isApiCallProcess,
+            opacity: 0.3,
+          )),
     );
   }
 
@@ -196,11 +202,17 @@ class _RegisterState extends State<Register> {
     return ElevatedButton(
       onPressed: () {
         if (_formKey.currentState!.validate()) {
+          setState(() {
+            isApiCallProcess = true;
+          });
           signUpRequestModel.username = userNameController.text;
           signUpRequestModel.email = emailController.text;
           signUpRequestModel.password = passwordController.text;
           signUpController SignUpCtr = new signUpController();
           SignUpCtr.signUp(signUpRequestModel).then((value) => {
+                setState(() {
+                  isApiCallProcess = false;
+                }),
                 if (value != null)
                   {
                     showDialog(

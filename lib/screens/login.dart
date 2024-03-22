@@ -5,6 +5,7 @@ import 'package:coffeeapp/models/loginModel.dart';
 import 'package:flutter/material.dart';
 import 'package:jwt_decode/jwt_decode.dart';
 import 'package:coffeeapp/controller/store.dart';
+import 'package:coffeeapp/component/progressAPI.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -45,21 +46,25 @@ class _LoginPageState extends State<Login> {
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        body: Stack(children: [
-          Positioned(
-            top: 80.0, // Make sure to use a double value with a decimal point
-            child: FadeInUp(
-              duration: Duration(milliseconds: 1000),
-              child: _buildTop(),
+        body: progressAPI(
+          child: Stack(children: [
+            Positioned(
+              top: 80.0, // Make sure to use a double value with a decimal point
+              child: FadeInUp(
+                duration: Duration(milliseconds: 1000),
+                child: _buildTop(),
+              ),
             ),
-          ),
-          Positioned(
-              bottom: 0,
-              child: Form(
-                key: _formKey,
-                child: _buildBottom(),
-              )),
-        ]),
+            Positioned(
+                bottom: 0,
+                child: Form(
+                  key: _formKey,
+                  child: _buildBottom(),
+                )),
+          ]),
+          inAsyncCall: isApiCallProcess,
+          opacity: 0.3,
+        ),
       ),
     );
   }
@@ -169,7 +174,9 @@ class _LoginPageState extends State<Login> {
     return TextFormField(
       controller: controller,
       decoration: InputDecoration(
-        suffixIcon: isPassword ? const Icon(Icons.remove_red_eye) : const Icon(Icons.done),
+        suffixIcon: isPassword
+            ? const Icon(Icons.remove_red_eye)
+            : const Icon(Icons.done),
       ),
       obscureText: isPassword,
       validator: (value) {
@@ -218,12 +225,15 @@ class _LoginPageState extends State<Login> {
           loginRequestModel.password = passwordController.text;
           loginController loginCtr = new loginController();
           loginCtr.login(loginRequestModel).then((value) {
+            setState(() {
+              isApiCallProcess = false;
+            });
             if (value.token.isNotEmpty) {
               Map<String, dynamic> decodedToken = Jwt.parseJwt(value.token);
               String role = decodedToken['role'];
-              Store save= new Store();
+              Store save = new Store();
               save.saveToken(value);
-              if(role == 'admin') {
+              if (role == 'admin') {
                 Navigator.pushNamed(context, Routes.adminHome);
               } else {
                 Navigator.pushNamed(context, Routes.home);
@@ -246,7 +256,7 @@ class _LoginPageState extends State<Login> {
                     actions: [
                       ElevatedButton(
                         onPressed: () {
-                         Navigator.pop(context);
+                          Navigator.pop(context);
                         },
                         child: Text('Đóng'),
                       ),

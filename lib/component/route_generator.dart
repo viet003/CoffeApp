@@ -7,8 +7,8 @@ import 'package:coffeeapp/screens/order.dart';
 import 'package:coffeeapp/screens/register.dart';
 import 'package:coffeeapp/screens/welcome.dart';
 import 'package:coffeeapp/admin/adminHome.dart';
+import "package:coffeeapp/admin/user.dart";
 import 'package:flutter/material.dart';
-
 import 'app_routes.dart';
 
 class RouteGenerator {
@@ -37,6 +37,11 @@ class RouteGenerator {
       case Routes.adminHome:
         return buildRoute(
           AdminHome(),
+          settings: settings,
+        );
+      case Routes.user:
+        return buildRoute(
+          User(),
           settings: settings,
         );
       case Routes.home:

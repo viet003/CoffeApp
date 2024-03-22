@@ -1,5 +1,6 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:coffeeapp/admin/widgets/drawer.dart';
+import 'package:coffeeapp/component/app_routes.dart';
 import 'package:flutter/material.dart';
 
 class AdminHome extends StatefulWidget {
@@ -15,9 +16,34 @@ class _AdminHomeState extends State<AdminHome> {
   late Color myColor;
 
   // list dataimages
-  List images = [""];
+  List<Icon> icons = [
+    Icon(
+      Icons.supervised_user_circle,
+      size: 80,
+    ),
+    Icon(
+      Icons.shopping_cart,
+      size: 80,
+    ),
+    Icon(
+      Icons.add_chart,
+      size: 80,
+    ),
+    Icon(
+      Icons.add_chart,
+      size: 80,
+    ),
+    Icon(
+      Icons.access_alarm,
+      size: 80,
+    ),
+    Icon(
+      Icons.accessibility_outlined,
+      size: 80,
+    )
+  ];
 
-  List titles = [""];
+  List titles = ["Người dùng", "Mặt hàng", "Thống kê", "null", "null", "null"];
 
   @override
   void initState() {
@@ -150,7 +176,11 @@ class _AdminHomeState extends State<AdminHome> {
                               itemCount: 6,
                               itemBuilder: (context, index) {
                                 return InkWell(
-                                    onTap: () {},
+                                    onTap: () {
+                                        if(index == 0) {
+                                          Navigator.pushNamed(context, Routes.user);
+                                        }
+                                    },
                                     child: Container(
                                       margin: const EdgeInsets.symmetric(
                                           vertical: 8, horizontal: 20),
@@ -166,9 +196,17 @@ class _AdminHomeState extends State<AdminHome> {
                                             )
                                           ]),
                                       child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
                                         children: [
-
+                                          icons[index],
+                                          Text(
+                                            titles[index],
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                color: Colors.black
+                                                    .withOpacity(0.6)),
+                                          )
                                         ],
                                       ),
                                     ));
