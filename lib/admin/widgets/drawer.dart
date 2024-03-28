@@ -43,53 +43,45 @@ class _DrawerWidgetState extends State<DrawerWidget> {
         children: [
           DrawerHeader(
               padding: EdgeInsets.zero,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: const AssetImage("assets/images/bg1.jpg"),
-                  fit: BoxFit.cover,
-                  colorFilter: ColorFilter.mode(
-                    Colors.black.withOpacity(0.8), // Thay đổi thành màu đen
-                    BlendMode.dstATop,
-                  ),
-                ),
+              decoration: const BoxDecoration(
+                color: Color(0xffC67C4E),
               ),
-              child: Container(
-                  child: Padding(
-                    padding: const EdgeInsets.all(0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const SizedBox(
-                          width: 80,
-                          height: 80,
-                          child: CircleAvatar(
-                            backgroundImage:
-                                AssetImage('assets/images/user.jpg'),
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text('${decodedToken['username']}',
-                                style: const TextStyle(
-                                  fontSize: 20,
-                                  color: Colors.white,
-                                )),
-                            Text('${decodedToken['email']}',
-                                style: const TextStyle(
-                                  fontSize: 13,
-                                  color: Colors.white,
-                                ))
-                          ],
-                        )
-                      ],
+              child: Padding(
+                padding: const EdgeInsets.all(0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const SizedBox(
+                      width: 80,
+                      height: 80,
+                      child: CircleAvatar(
+                        backgroundImage:
+                            AssetImage('assets/images/user.jpg'),
+                      ),
                     ),
-                  ))),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text('${decodedToken['username']}',
+                            style: const TextStyle(
+                              fontSize: 20,
+                              color: Colors.white,
+                            )),
+                        Text('${decodedToken['email']}',
+                            style: const TextStyle(
+                              fontSize: 13,
+                              color: Colors.white,
+                            ))
+                      ],
+                    )
+                  ],
+                ),
+              )),
           const ListTile(
             leading: Icon(
               CupertinoIcons.home,

@@ -1,17 +1,18 @@
 import 'package:coffeeapp/component/progressAPI.dart';
-import 'package:coffeeapp/controller/userController.dart';
+import 'package:coffeeapp/controller/productController.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
 
-class User extends StatefulWidget {
-  const User({Key? key}) : super(key: key);
+
+class Product extends StatefulWidget {
+  const Product({Key? key}) : super(key: key);
 
   @override
-  State<User> createState() => _UserState();
+  State<Product> createState() => _ProductState();
 }
 
-class _UserState extends State<User> {
+class _ProductState extends State<Product> {
   late int currentPage;
   int itemsPerPage = 10;
   late int startIndex = 0;
@@ -21,24 +22,28 @@ class _UserState extends State<User> {
   late List<Map<String, dynamic>> displayedItems = [];
   final _formKey = GlobalKey<FormState>();
   bool isApiCallProcess = false;
-  final UserController userController = UserController();
-  List<Map<String, dynamic>> listUsers = <Map<String, dynamic>>[];
+  final ProductController productController = ProductController();
+  List<Map<String, dynamic>> listProduct = <Map<String, dynamic>>[];
 
-  TextEditingController passwordController = TextEditingController();
+  TextEditingController name = TextEditingController();
+  TextEditingController description = TextEditingController();
+  TextEditingController stars = TextEditingController();
+  TextEditingController price = TextEditingController();
+  TextEditingController image = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     searchController = TextEditingController();
     currentPage = 0;
-    _loadUsers();
+    _loadProducts();
   }
 
-  void _loadUsers() {
-    userController.getUsers().then((product) {
+  void _loadProducts() {
+    productController.getProducts().then((product) {
       setState(() {
-        listUsers = product;
-        displayedItems = listUsers;
+        listProduct = product;
+        displayedItems = listProduct;
         isApiCallProcess = false;
       });
     }).catchError((error) {
@@ -48,8 +53,8 @@ class _UserState extends State<User> {
 
   void _searchProducts(String value) {
     setState(() {
-      displayedItems = listUsers
-          .where((item) => item['username'].contains(value))
+      displayedItems = listProduct
+          .where((item) => item['name'].contains(value))
           .toList();
       _resetPage();
     });
@@ -217,11 +222,158 @@ class _UserState extends State<User> {
                     )
                   ],
                 ),
+                Positioned(
+                  bottom: 80,
+                  right: 20,
+                  child: Container(
+                    height: 60,
+                    width: 60,
+                    decoration: BoxDecoration(
+                      color: const Color(0xffC67C4E),
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: IconButton(
+                      icon: const Icon(
+                        Icons.auto_fix_high_sharp,
+                        size: 30,
+                        color: Colors.white,
+                      ),
+                      onPressed: () {
+                        cancel();
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              scrollable: true,
+                              content: SizedBox(
+                                width: MediaQuery.of(context).size.width,
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Center(
+                                      child: Text(
+                                        'Thông tin chi tiết',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18.0,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 10),
+                                    _buildFormInsert(),
+                                  ],
+                                ),
+                              ),
+                              insetPadding: const EdgeInsets.symmetric(
+                                horizontal: 20.0,
+                              ),
+                              // Adjust padding as needed
+                              actions: [_buildSubmitButton()],
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildFormInsert() {
+    return Form(
+      key: _formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildInputField(name, Icons.add_task_rounded, 'Tên sản phẩm'),
+          _buildInputField(description, Icons.add_task_rounded, 'Mô tả'),
+          _buildInputField(stars, Icons.add_task_rounded, 'Số sao'),
+          _buildInputField(price, Icons.add_task_rounded, 'Giá sản phẩm'),
+          _buildInputField(image, Icons.add_task_rounded, 'Đường dẫn hình ảnh'),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInputField(
+      TextEditingController controller, IconData icon, String label) {
+    return TextFormField(
+      decoration: InputDecoration(
+        labelText: label,
+        icon: Icon(icon),
+      ),
+      controller: controller,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Không được bỏ trống thông tin.';
+        }
+        return null;
+      },
+    );
+  }
+
+  Widget _buildSubmitButton() {
+    return ElevatedButton(
+      onPressed: () {
+        if (_formKey.currentState!.validate()) {
+          setState(() {
+            isApiCallProcess = true;
+          });
+          Map<String, dynamic> data = {
+            'name': name.text,
+            'description': description.text,
+            'stars': stars.text,
+            'price': price.text,
+            'image': image.text
+          };
+          productController.insertProduct(data).then((value) => {
+            if (value['err'] == 0)
+              {
+                _loadProducts(),
+                Navigator.pop(context),
+                cancel()
+              }
+            else
+              {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text('Thông báo'),
+                      content: SizedBox(
+                        height: 100,
+                        child: Column(
+                          children: [Text(value['msg'])],
+                        ),
+                      ),
+                      actions: [
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Text('Đóng'),
+                        ),
+                      ],
+                    );
+                  },
+                )
+              }
+          });
+        }
+      },
+      style: ElevatedButton.styleFrom(
+        shape: const StadiumBorder(),
+        elevation: 10,
+        // shadowColor: myColor,
+        minimumSize: const Size.fromHeight(50),
+      ),
+      child: const Text("Submit"),
     );
   }
 
@@ -233,14 +385,17 @@ class _UserState extends State<User> {
             isApiCallProcess = true;
           });
           Map<String, dynamic> data = {
-            'email': input['email'],
-            'newpassword': passwordController.text,
-            'role': 'admin'
+            'id': input['id'],
+            'name': name.text,
+            'description': description.text,
+            'stars': stars.text,
+            'price': price.text,
+            'image': image.text
           };
-          userController.changePassbyAdmin(data).then((value) => {
+          productController.updateProduct(data).then((value) => {
             if (value['err'] == 0)
               {
-                _loadUsers(),
+                _loadProducts(),
                 Navigator.pop(context),
                 cancel()
               }
@@ -282,46 +437,19 @@ class _UserState extends State<User> {
     );
   }
 
-  Widget _buildFormUpdate() {
-    return Form(
-      key: _formKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildInputField(passwordController, Icons.add_task_rounded, 'Mật khẩu mới'),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildInputField(
-      TextEditingController controller, IconData icon, String label) {
-    return TextFormField(
-      decoration: InputDecoration(
-        labelText: label,
-        icon: Icon(icon),
-      ),
-      controller: controller,
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Không được bỏ trống thông tin.';
-        }
-        return null;
-      },
-    );
-  }
-
   void cancel() {
     setState(() {
-      passwordController.text = '';
+      name.text = '';
+      description.text = '';
+      stars.text = '';
+      price.text = '';
+      image.text = '';
     });
   }
 
   // build child widget
   Widget _buildChild(Map<String, dynamic> input) {
-    bool isActive = input['isActive'] as bool;
     return Container(
-      margin: EdgeInsets.only(top:10),
       height: 200,
       decoration: BoxDecoration(
         color: Colors.black.withOpacity(0.7), // Màu nền là màu đen
@@ -331,7 +459,7 @@ class _UserState extends State<User> {
         children: [
           Padding(
             padding: const EdgeInsets.only(
-              top: 15,
+              top: 10,
               left: 20,
               right: 10,
             ),
@@ -342,14 +470,14 @@ class _UserState extends State<User> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Container(
-                    height: 80,
-                    width: 80,
+                    height: 150,
+                    width: 100,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(40),
+                      borderRadius: BorderRadius.circular(20),
                       color: Colors.white,
-                      image:const DecorationImage(
-                        image: AssetImage("assets/images/user.jpg"),
-                        fit: BoxFit.cover, // Có thể thay đổi tùy theo yêu cầu của bạn
+                      image: DecorationImage(
+                        image: NetworkImage(input['image']),
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ),
@@ -362,7 +490,7 @@ class _UserState extends State<User> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'ID: ${input['id']} ',
+                          'Tên sản phẩm: ${input['name']} ',
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
                           style: TextStyle(
@@ -374,7 +502,7 @@ class _UserState extends State<User> {
                           height: 5,
                         ),
                         Text(
-                          'Tên người dùng: ${input['username']} ',
+                          'Mỗ tả: ${input['description']} ',
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
                           style: TextStyle(
@@ -384,7 +512,7 @@ class _UserState extends State<User> {
                           height: 5,
                         ),
                         Text(
-                          'Email: ${input['email']} ',
+                          'Đánh giá: ${input['stars']} ',
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
                           style: TextStyle(
@@ -394,7 +522,7 @@ class _UserState extends State<User> {
                           height: 5,
                         ),
                         Text(
-                          'Trạng thái: ${input['isActive'] ? 'Đang hoạt động' : 'Dừng hoạt động'}',
+                          'Giá: ${input['price']}đ',
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
                           style: TextStyle(
@@ -420,6 +548,13 @@ class _UserState extends State<User> {
                   ),
                   child: IconButton(
                     onPressed: () {
+                      setState(() {
+                        name.text = input['name'];
+                        description.text = input['description'];
+                        stars.text = input['stars'];
+                        price.text = input['price'].toString();
+                        image.text = input['image'];
+                      });
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
@@ -441,7 +576,7 @@ class _UserState extends State<User> {
                                     ),
                                   ),
                                   const SizedBox(height: 10),
-                                  _buildFormUpdate(),
+                                  _buildFormInsert(),
                                 ],
                               ),
                             ),
@@ -455,58 +590,6 @@ class _UserState extends State<User> {
                       );
                     },
                     icon: const Icon(Icons.auto_fix_high_sharp, size: 30, color: Colors.white,),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
-                    color: const Color(0xffC67C4E),
-                  ),
-                  child: IconButton(
-                    onPressed: () {
-                      setState(() {
-                        isApiCallProcess = true;
-                      });
-                      Map<String, dynamic> data = {
-                        'id': input['id'],
-                        'isActive': input['isActive']
-                      };
-                      userController.setState(data).then((value) => {
-                        if(value['err'] == 0) {
-                          userController.getUsers().then((value) => {
-                            setState(() {
-                              isApiCallProcess = false;
-                              displayedItems = value;
-                            }),
-                          })
-                        } else {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: const Text('Thông báo'),
-                                content: SizedBox(
-                                  height: 100,
-                                  child: Column(
-                                    children: [Text(value['msg'])],
-                                  ),
-                                ),
-                                actions: [
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                    child: const Text('Đóng'),
-                                  ),
-                                ],
-                              );
-                            },
-                          )
-                        }
-                      });
-                    },
-                    icon: Icon( isActive ? Icons.lock_clock_sharp : Icons.change_circle, size: 30, color: Colors.white,),
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -537,11 +620,11 @@ class _UserState extends State<User> {
                             actions: [
                               ElevatedButton(
                                   onPressed: () {
-                                    userController.deleteUsers({ 'id': input['id']}).then((value) => {
+                                    productController.deleteProduct({ 'id': input['id']}).then((value) => {
                                       if(value['err'] == 0) {
-                                        userController.getUsers().then((value) => {
+                                        productController.getProducts().then((value) => {
                                           setState(() {
-                                            displayedItems = value;
+                                            listProduct = value;
                                             isApiCallProcess = false;
                                           }),
                                           Navigator.pop(context),
@@ -588,7 +671,7 @@ class _UserState extends State<User> {
                 ),
               ],
             ),
-          ),
+          )
         ],
       ),
     );

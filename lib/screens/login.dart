@@ -27,7 +27,7 @@ class _LoginPageState extends State<Login> {
   @override
   void initState() {
     super.initState();
-    loginRequestModel = new LoginRequestModel();
+    loginRequestModel = LoginRequestModel();
   }
 
   @override
@@ -47,11 +47,13 @@ class _LoginPageState extends State<Login> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: progressAPI(
+          inAsyncCall: isApiCallProcess,
+          opacity: 0.3,
           child: Stack(children: [
             Positioned(
               top: 80.0, // Make sure to use a double value with a decimal point
               child: FadeInUp(
-                duration: Duration(milliseconds: 1000),
+                duration: const Duration(milliseconds: 1000),
                 child: _buildTop(),
               ),
             ),
@@ -62,8 +64,6 @@ class _LoginPageState extends State<Login> {
                   child: _buildBottom(),
                 )),
           ]),
-          inAsyncCall: isApiCallProcess,
-          opacity: 0.3,
         ),
       ),
     );
@@ -115,47 +115,47 @@ class _LoginPageState extends State<Login> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         FadeInUp(
-            duration: Duration(milliseconds: 1100),
+            duration: const Duration(milliseconds: 1100),
             child: Text(
               "Đăng nhập",
               style: TextStyle(
                   color: myColor, fontSize: 32, fontWeight: FontWeight.w500),
             )),
         FadeInUp(
-          duration: Duration(milliseconds: 1200),
+          duration: const Duration(milliseconds: 1200),
           child: _buildGreyText("Welcome to our project! Let's login"),
         ),
         const SizedBox(height: 40),
         FadeInUp(
-          duration: Duration(milliseconds: 1300),
+          duration: const Duration(milliseconds: 1300),
           child: _buildGreyText("Địa chỉ email"),
         ),
         FadeInUp(
-          duration: Duration(milliseconds: 1400),
+          duration: const Duration(milliseconds: 1400),
           child: _buildInputField(emailController),
         ),
         const SizedBox(height: 20),
         FadeInUp(
-          duration: Duration(milliseconds: 1500),
+          duration: const Duration(milliseconds: 1500),
           child: _buildGreyText("Mật khẩu"),
         ),
         FadeInUp(
-          duration: Duration(milliseconds: 1600),
+          duration: const Duration(milliseconds: 1600),
           child: _buildInputField(passwordController, isPassword: true),
         ),
         const SizedBox(height: 20),
         FadeInUp(
-          duration: Duration(milliseconds: 1700),
+          duration: const Duration(milliseconds: 1700),
           child: _buildRememberForgot(),
         ),
         const SizedBox(height: 10),
         FadeInUp(
-          duration: Duration(milliseconds: 1800),
+          duration: const Duration(milliseconds: 1800),
           child: _buildLoginButton(),
         ),
         const SizedBox(height: 10),
         FadeInUp(
-          duration: Duration(milliseconds: 1900),
+          duration: const Duration(milliseconds: 1900),
           child: _buildOtherLogin(),
         ),
       ],
@@ -223,7 +223,7 @@ class _LoginPageState extends State<Login> {
           });
           loginRequestModel.email = emailController.text;
           loginRequestModel.password = passwordController.text;
-          loginController loginCtr = new loginController();
+          loginController loginCtr = loginController();
           loginCtr.login(loginRequestModel).then((value) {
             setState(() {
               isApiCallProcess = false;
@@ -231,7 +231,7 @@ class _LoginPageState extends State<Login> {
             if (value.token.isNotEmpty) {
               Map<String, dynamic> decodedToken = Jwt.parseJwt(value.token);
               String role = decodedToken['role'];
-              Store save = new Store();
+              Store save = Store();
               save.saveToken(value);
               if (role == 'admin') {
                 Navigator.pushNamed(context, Routes.adminHome);
@@ -246,8 +246,8 @@ class _LoginPageState extends State<Login> {
                 context: context,
                 builder: (BuildContext context) {
                   return AlertDialog(
-                    title: Text('Thông báo'),
-                    content: Container(
+                    title: const Text('Thông báo'),
+                    content: SizedBox(
                       height: 100,
                       child: Column(
                         children: [Text(value.msg)],
@@ -258,7 +258,7 @@ class _LoginPageState extends State<Login> {
                         onPressed: () {
                           Navigator.pop(context);
                         },
-                        child: Text('Đóng'),
+                        child: const Text('Đóng'),
                       ),
                     ],
                   );
@@ -291,7 +291,7 @@ class _LoginPageState extends State<Login> {
                         context,
                         Routes.register,
                       ),
-                  child: Text('Đăng ký')),
+                  child: const Text('Đăng ký')),
             ],
           ),
           const SizedBox(height: 5),

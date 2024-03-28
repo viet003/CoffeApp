@@ -25,8 +25,8 @@ class _RegisterState extends State<Register> {
   @override
   void initState() {
     super.initState();
-    signUpRequestModel = new SignUpRequestModel();
-    signUpResponseModel = new SignUpResponseModel();
+    signUpRequestModel = SignUpRequestModel();
+    signUpResponseModel = SignUpResponseModel();
   }
 
   @override
@@ -46,12 +46,14 @@ class _RegisterState extends State<Register> {
       child: Scaffold(
           backgroundColor: Colors.transparent,
           body: progressAPI(
+            inAsyncCall: isApiCallProcess,
+            opacity: 0.3,
             child: Stack(children: [
               Positioned(
                 top:
                     80.0, // Make sure to use a double value with a decimal point
                 child: FadeInUp(
-                  duration: Duration(milliseconds: 1000),
+                  duration: const Duration(milliseconds: 1000),
                   child: _buildTop(),
                 ),
               ),
@@ -62,8 +64,6 @@ class _RegisterState extends State<Register> {
                     child: _buildBottom(),
                   )),
             ]),
-            inAsyncCall: isApiCallProcess,
-            opacity: 0.3,
           )),
     );
   }
@@ -114,60 +114,60 @@ class _RegisterState extends State<Register> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         FadeInUp(
-            duration: Duration(milliseconds: 1100),
+            duration: const Duration(milliseconds: 1100),
             child: Text(
               "Đăng ký",
               style: TextStyle(
                   color: myColor, fontSize: 32, fontWeight: FontWeight.w500),
             )),
         FadeInUp(
-          duration: Duration(milliseconds: 1200),
+          duration: const Duration(milliseconds: 1200),
           child: _buildGreyText("Welcome to our project! Let's Signup"),
         ),
         const SizedBox(height: 40),
         FadeInUp(
-          duration: Duration(milliseconds: 1300),
+          duration: const Duration(milliseconds: 1300),
           child: _buildGreyText("Tên người dùng"),
         ),
         FadeInUp(
-          duration: Duration(milliseconds: 1400),
+          duration: const Duration(milliseconds: 1400),
           child: _buildInputField(userNameController),
         ),
         const SizedBox(height: 30),
         FadeInUp(
-          duration: Duration(milliseconds: 1500),
+          duration: const Duration(milliseconds: 1500),
           child: _buildGreyText("Địa chỉ email"),
         ),
         FadeInUp(
-          duration: Duration(milliseconds: 1600),
+          duration: const Duration(milliseconds: 1600),
           child: _buildInputField(emailController),
         ),
         const SizedBox(height: 30),
         FadeInUp(
-          duration: Duration(milliseconds: 1700),
+          duration: const Duration(milliseconds: 1700),
           child: _buildGreyText("Mật khẩu"),
         ),
         FadeInUp(
-          duration: Duration(milliseconds: 1800),
+          duration: const Duration(milliseconds: 1800),
           child: _buildInputField(passwordController, isPassword: true),
         ),
         const SizedBox(height: 30),
         FadeInUp(
-          duration: Duration(milliseconds: 1900),
+          duration: const Duration(milliseconds: 1900),
           child: _buildSignUpButton(),
         ),
         const SizedBox(
           height: 30,
         ),
         FadeInUp(
-            duration: Duration(milliseconds: 2000),
+            duration: const Duration(milliseconds: 2000),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 _buildGreyText("or"),
                 TextButton(
                     onPressed: () => Navigator.pop(context),
-                    child: Text('Đăng nhập'))
+                    child: const Text('Đăng nhập'))
               ],
             )),
       ],
@@ -186,7 +186,7 @@ class _RegisterState extends State<Register> {
     return TextFormField(
       controller: controller,
       decoration: InputDecoration(
-        suffixIcon: isPassword ? Icon(Icons.remove_red_eye) : Icon(Icons.done),
+        suffixIcon: isPassword ? const Icon(Icons.remove_red_eye) : const Icon(Icons.done),
       ),
       obscureText: isPassword,
       validator: (value) {
@@ -208,42 +208,44 @@ class _RegisterState extends State<Register> {
           signUpRequestModel.username = userNameController.text;
           signUpRequestModel.email = emailController.text;
           signUpRequestModel.password = passwordController.text;
-          signUpController SignUpCtr = new signUpController();
-          SignUpCtr.signUp(signUpRequestModel).then((value) => {
+          signUpController signUpCtr = signUpController();
+          signUpCtr.signUp(signUpRequestModel).then((value) => {
                 setState(() {
                   isApiCallProcess = false;
                 }),
-                if (value != null)
-                  {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: Text('Thông báo'),
-                          content: Container(
-                            height: 100,
-                            child: Column(
-                              children: [Text(value.msg)],
-                            ),
+                {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text(
+                          'Thông báo',
+                          textAlign: TextAlign.center,
+                        ),
+                        content: SizedBox(
+                          height: 100,
+                          child: Column(
+                            children: [Text(value.msg)],
                           ),
-                          actions: [
-                            ElevatedButton(
-                              onPressed: () {
-                                if (value.err == 0) {
-                                  Navigator.of(context).pop();
-                                  Navigator.of(context).pop();
-                                } else {
-                                  Navigator.of(context).pop();
-                                }
-                              },
-                              child: Text('Đóng'),
-                            ),
-                          ],
-                        );
-                        // Hiển thị popup khi nhấn nút
-                      },
-                    )
-                  }
+                        ),
+                        actions: [
+                          ElevatedButton(
+                            onPressed: () {
+                              if (value.err == 0) {
+                                Navigator.of(context).pop();
+                                Navigator.of(context).pop();
+                              } else {
+                                Navigator.of(context).pop();
+                              }
+                            },
+                            child: const Text('Đóng'),
+                          ),
+                        ],
+                      );
+                      // Hiển thị popup khi nhấn nút
+                    },
+                  )
+                }
               });
         }
       },

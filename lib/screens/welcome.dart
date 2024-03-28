@@ -95,6 +95,7 @@ class _WelcomeState extends State<Welcome> {
                       title: 'Get Started',
                       onPressed: () => {
                         _initializeStateAsync()
+                        // Navigator.pushNamed(context, Routes.adminHome)
                       }
                     ),
                   ),

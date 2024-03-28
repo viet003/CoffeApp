@@ -8,6 +8,7 @@ import 'package:coffeeapp/screens/register.dart';
 import 'package:coffeeapp/screens/welcome.dart';
 import 'package:coffeeapp/admin/adminHome.dart';
 import "package:coffeeapp/admin/user.dart";
+import 'package:coffeeapp/admin/product.dart';
 import 'package:flutter/material.dart';
 import 'app_routes.dart';
 
@@ -44,14 +45,26 @@ class RouteGenerator {
           User(),
           settings: settings,
         );
+      case Routes.product:
+        return buildRoute(
+          Product(),
+          settings: settings,
+        );
       case Routes.home:
         return buildRoute(
           const Home(),
           settings: settings,
         );
       case Routes.detail:
+        final Map<String, dynamic> args = settings.arguments as Map<String, dynamic>;
         return buildRoute(
-          const Detail(),
+          Detail(
+            name: args['name'],
+            image: args['image'],
+            price: args['price'],
+            stars: args['stars'],
+            description: args['description'],
+          ),
           settings: settings,
         );
       case Routes.order:

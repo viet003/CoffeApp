@@ -1,14 +1,19 @@
-import 'package:coffeeapp/component/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
 
 class Item extends StatefulWidget {
   final String image;
+  final String price;
+  final String stars;
+  final String name;
 
   const Item({
     super.key,
+    required this.name,
     required this.image,
+    required this.price,
+    required this.stars
   });
 
   @override
@@ -41,7 +46,7 @@ class _ItemState extends State<Item> {
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage(widget.image),
+                      image: NetworkImage(widget.image),
                       fit: BoxFit.fitWidth,
                       alignment: Alignment.center,
                       scale: 1
@@ -73,7 +78,7 @@ class _ItemState extends State<Item> {
                           width: 2,
                         ),
                         Text(
-                          "4.9",
+                          widget.stars,
                           style: GoogleFonts.sora(
                             fontSize: 10,
                             fontWeight: FontWeight.w600,
@@ -87,12 +92,8 @@ class _ItemState extends State<Item> {
               ],
             ),
             GestureDetector(
-              onTap: () => Navigator.pushNamed(
-                context,
-                Routes.detail,
-              ),
               child: Text(
-                "Cappucino",
+                widget.name,
                 style: GoogleFonts.sora(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
@@ -118,7 +119,7 @@ class _ItemState extends State<Item> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "\$ 4.53",
+                  "${widget.price} đ",
                   style: GoogleFonts.sora(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
@@ -126,10 +127,6 @@ class _ItemState extends State<Item> {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () => Navigator.pushNamed(
-                    context,
-                    Routes.detail,
-                  ),
                   child: Container(
                     width: 32,
                     height: 32,

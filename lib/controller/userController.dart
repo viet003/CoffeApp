@@ -26,14 +26,26 @@ class UserController {
   // xoá userb
   Future<Map<String, dynamic>> deleteUsers(Map<String, dynamic> data) async {
     Uri url = Uri.parse('${Environment.apiUrl}deleteaccount');
-
+    // print(convert.jsonEncode(data));
     final response = await http.delete(url, headers: {"Content-type": "application/json"}, body: convert.jsonEncode(data));
     if (response.statusCode == 200) {
       Map<String, dynamic> jsonData = convert.jsonDecode(response.body);
-
       return jsonData;
     } else {
-      throw Exception('Failed to load data!');
+      throw Exception('Failed to load data! ${response.body}');
+    }
+  }
+  // Doi mat khau
+  Future<Map<String, dynamic>> changePassbyAdmin(Map<String, dynamic> data) async {
+    print(data);
+    Uri url = Uri.parse('${Environment.apiUrl}changepass');
+    // print(convert.jsonEncode(data));
+    final response = await http.put(url, headers: {"Content-type": "application/json"}, body: convert.jsonEncode(data));
+    if (response.statusCode == 200) {
+      Map<String, dynamic> jsonData = convert.jsonDecode(response.body);
+      return jsonData;
+    } else {
+      throw Exception('Failed to load data! ${response.body}');
     }
   }
 
@@ -41,7 +53,7 @@ class UserController {
   Future<Map<dynamic, dynamic>> setState(Map<String, dynamic> data) async {
     try {
       Uri url = Uri.parse('${Environment.apiUrl}setstate');
-      print(convert.jsonEncode(data));
+      // print(convert.jsonEncode(data));
       final response = await http.post(url, headers: {"Content-type": "application/json"}, body: convert.jsonEncode(data));
       if (response.statusCode == 200) {
         Map<String, dynamic> jsonData = convert.jsonDecode(response.body);

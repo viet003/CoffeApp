@@ -10,6 +10,6 @@ class Routes {
   static const delivery = '/delivery';
   static const adminHome = "/adminhome";
   static const user = "/user";
-  static const warehouse = "/warehouse";
+  static const product = "/product";
   static const chart = "/chart";
 }
